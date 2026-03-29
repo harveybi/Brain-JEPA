@@ -1,1 +1,7 @@
 *.pyc
+
+# local outputs
+results/
+__pycache__/
+*.pyc
+data/
