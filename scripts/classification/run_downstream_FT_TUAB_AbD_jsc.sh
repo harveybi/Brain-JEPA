@@ -6,8 +6,8 @@
 #SBATCH --partition=booster
 #SBATCH --cpus-per-task=12
 #SBATCH --time=04:00:00
-#SBATCH --output=/p/project1/hai_1148/results/logs/ADNI/%j.out
-#SBATCH --error=/p/project1/hai_1148/results/logs/ADNI/%j.err
+#SBATCH --output=/p/project1/hai_1148/results/logs/TUAB/%j.out
+#SBATCH --error=/p/project1/hai_1148/results/logs/TUAB/%j.err
 
 set -euo pipefail
 
@@ -21,7 +21,7 @@ fi
 REPO_ROOT="/p/project1/hai_1148/Brain-JEPA"
 DATA_ROOT="${REPO_ROOT}/data"
 OUTPUT_ROOT="${REPO_ROOT}/output_dirs"
-LOG_ROOT="/p/project1/hai_1148/results/logs/ADNI"
+LOG_ROOT="/p/project1/hai_1148/results/logs/TUAB"
 PRETRAIN_CKPT="${REPO_ROOT}/path/to/jepa-ep300.pth.tar"
 
 mkdir -p "${LOG_ROOT}"
@@ -47,7 +47,7 @@ python downstream_eval.py \
     --output_root "${OUTPUT_ROOT}" \
     --data_root "${DATA_ROOT}" \
     --model_name vit_base \
-    --data_make_fn ADNI \
+    --data_make_fn TUAB \
     --load_path "${PRETRAIN_CKPT}" \
     --use_normalization \
     --crop_size 400,160 \
