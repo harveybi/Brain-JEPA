@@ -5,8 +5,8 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --partition=develbooster
 #SBATCH --cpus-per-task=48
-#SBATCH --output=/p/project1/hai_1024/results/logs/ADNI/%j.out
-#SBATCH --error=/p/project1/hai_1024/results/logs/ADNI/%j.err
+#SBATCH --output=/p/project1/hai_1148/results/logs/ADNI/%j.out
+#SBATCH --error=/p/project1/hai_1148/results/logs/ADNI/%j.err
 #SBATCH --time=00:20:00
 
 # Propagate the specified number of CPUs per task to each `srun`.
