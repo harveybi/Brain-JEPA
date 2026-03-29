@@ -35,7 +35,7 @@ cd "${REPO_ROOT}"
 source /p/project1/hai_1024/bi1/miniforge3/etc/profile.d/conda.sh
 conda activate brain-jepa
 
-python downstream_eval.py \
+srun python downstream_eval.py \
     --config "${REPO_ROOT}/configs/downstream/fine_tune.yaml" \
     --downstream_task fine_tune \
     --batch_size 16 \
