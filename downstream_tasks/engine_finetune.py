@@ -148,20 +148,20 @@ def evaluate(args, data_loader, model, device, task):
         metric_logger.update(loss=loss.item())
 
         if task == 'classification':
-            target = target.squeeze()
+            target = target.view(-1)
             probabilities = F.softmax(output, dim=1)
             predictions = torch.argmax(probabilities, dim=1)
             acc = (predictions == target).float().mean().item() * 100.0
             metric_logger.meters['acc'].update(acc, n=batch_size)
 
-            gt_all.append(target.detach().cpu().numpy())
-            pred_all.append(predictions.detach().cpu().numpy())
+            gt_all.append(target.detach().cpu().numpy().reshape(-1))
+            pred_all.append(predictions.detach().cpu().numpy().reshape(-1))
             prob_all.append(probabilities.detach().cpu().numpy())
         else:
             target = target.float().view(-1)
             prediction = output.float().view(-1)
-            gt_all.append(target.detach().cpu().numpy())
-            pred_all.append(prediction.detach().cpu().numpy())
+            gt_all.append(target.detach().cpu().numpy().reshape(-1))
+            pred_all.append(prediction.detach().cpu().numpy().reshape(-1))
 
             mae = torch.mean(torch.abs(target - prediction))
             rmse = torch.sqrt(torch.mean((target - prediction) ** 2))

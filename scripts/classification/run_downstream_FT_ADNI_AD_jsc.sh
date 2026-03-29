@@ -5,7 +5,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --partition=booster
 #SBATCH --cpus-per-task=12
-#SBATCH --time=04:00:00
+#SBATCH --time=00:20:00
 #SBATCH --output=/p/project1/hai_1148/results/logs/ADNI/%j.out
 #SBATCH --error=/p/project1/hai_1148/results/logs/ADNI/%j.err
 
