@@ -13,8 +13,10 @@ set -euo pipefail
 
 SEED="${1:-}"
 BLR="${2:-}"
-if [[ -z "${SEED}" || -z "${BLR}" ]]; then
-    echo "Usage: sbatch $0 <seed> <blr>"
+WEIGHT_DECAY="${3:-}"
+LAYER_DECAY="${4:-}"
+if [[ -z "${SEED}" || -z "${BLR}" || -z "${WEIGHT_DECAY}" || -z "${LAYER_DECAY}" ]]; then
+    echo "Usage: sbatch $0 <seed> <blr> <weight_decay> <layer_decay>"
     exit 1
 fi
 
@@ -41,6 +43,8 @@ srun python downstream_eval.py \
     --batch_size 16 \
     --epochs 50 \
     --blr "${BLR}" \
+    --weight_decay "${WEIGHT_DECAY}" \
+    --layer_decay "${LAYER_DECAY}" \
     --min_lr 0.000001 \
     --smoothing 0.5 \
     --seed "${SEED}" \

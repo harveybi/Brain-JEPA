@@ -40,6 +40,8 @@ def get_args_parser():
     parser.add_argument('--blr', default=0.01, type=float)
     parser.add_argument('--min_lr', default=0.000001, type=float)
     parser.add_argument('--smoothing', default=0.0, type=float)
+    parser.add_argument('--weight_decay', default=None, type=float)
+    parser.add_argument('--layer_decay', default=None, type=float)
     parser.add_argument('--num_seed', default=5, type=int)
     parser.add_argument('--seed', default=0, type=int)
     
