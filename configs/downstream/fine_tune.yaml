@@ -7,9 +7,9 @@ lr: null
 drop_path: 0.1
 
 clip_grad: null
-weight_decay: 0.05
+weight_decay: 0.1
 
-layer_decay: 0.75
+layer_decay: 0.65
 warmup_epochs: 0
 
 finetune: ''

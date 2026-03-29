@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --gres=gpu:1
-#SBATCH --partition=booster
+#SBATCH --partition=develbooster
 #SBATCH --cpus-per-task=12
 #SBATCH --time=00:20:00
 #SBATCH --output=/p/project1/hai_1148/results/logs/ADNI/%j.out
@@ -42,7 +42,7 @@ srun python downstream_eval.py \
     --epochs 50 \
     --blr "${BLR}" \
     --min_lr 0.000001 \
-    --smoothing 0.0 \
+    --smoothing 0.5 \
     --seed "${SEED}" \
     --output_root "${OUTPUT_ROOT}" \
     --data_root "${DATA_ROOT}" \

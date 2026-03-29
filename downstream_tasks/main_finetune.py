@@ -94,6 +94,31 @@ def _save_best_artifacts(args, epoch, model_without_ddp, optimizer, loss_scaler,
     misc.save_on_master(checkpoint, os.path.join(args.output_dir, 'best_checkpoint.pth'))
 
 
+def _run_final_best_test(args, model_without_ddp, data_loader_test, device):
+    best_checkpoint_path = os.path.join(args.output_dir, 'best_checkpoint.pth')
+    if not os.path.isfile(best_checkpoint_path):
+        print(f'No best checkpoint found at {best_checkpoint_path}, skipping final best-checkpoint test pass.')
+        return None
+
+    checkpoint = torch.load(best_checkpoint_path, map_location='cpu')
+    model_without_ddp.load_state_dict(checkpoint['model'])
+    final_test_stats = evaluate(args, data_loader_test, model_without_ddp, device, args.task)
+
+    summary = {
+        'dataset': args.data_make_fn,
+        'seed': int(args.seed),
+        'blr': float(args.blr),
+        'checkpoint_epoch': int(checkpoint['epoch']),
+        'primary_metric': args.dataset_config['primary_metric'],
+        'test': _subset_stats(final_test_stats, args.dataset_config['logged_metrics']),
+    }
+    with open(os.path.join(args.output_dir, 'final_best_test.json'), 'w', encoding='utf-8') as f:
+        json.dump(summary, f, indent=2)
+
+    print(f'Final test pass on saved best checkpoint (epoch {checkpoint["epoch"]}): {summary["test"]}')
+    return final_test_stats
+
+
 def main(args):
     print('job dir: {}'.format(os.path.dirname(os.path.realpath(__file__))))
     print("{}".format(args).replace(', ', ',\n'))
@@ -236,6 +261,10 @@ def main(args):
             print(f"Test MAE: {test_stats['mae']:.3f} | Test RMSE: {test_stats['rmse']:.3f}")
 
         if log_writer is not None:
+            if 'loss' in val_stats:
+                log_writer.add_scalar('perf/val_loss', val_stats['loss'], epoch)
+            if 'loss' in test_stats:
+                log_writer.add_scalar('perf/test_loss', test_stats['loss'], epoch)
             for metric_name in args.dataset_config['logged_metrics']:
                 if metric_name in test_stats:
                     log_writer.add_scalar(f'perf/test_{metric_name}', test_stats[metric_name], epoch)
@@ -278,6 +307,14 @@ def main(args):
                 log_writer.flush()
             with open(os.path.join(args.output_dir, "log.txt"), mode="a", encoding="utf-8") as f:
                 f.write(json.dumps(log_stats) + "\n")
+
+    if args.output_dir and misc.is_main_process():
+        _run_final_best_test(
+            args=args,
+            model_without_ddp=model_without_ddp,
+            data_loader_test=data_loader_test,
+            device=device,
+        )
 
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
