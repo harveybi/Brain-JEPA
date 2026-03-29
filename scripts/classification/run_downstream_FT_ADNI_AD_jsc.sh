@@ -22,7 +22,7 @@ REPO_ROOT="/p/project1/hai_1148/Brain-JEPA"
 DATA_ROOT="${REPO_ROOT}/data"
 OUTPUT_ROOT="${REPO_ROOT}/output_dirs"
 LOG_ROOT="/p/project1/hai_1148/results/logs/ADNI"
-PRETRAIN_CKPT="${REPO_ROOT}/path/to/jepa-ep300.pth.tar"
+PRETRAIN_CKPT="/p/project1/hai_1148/Brain-JEPA/logs/Pretraining/jepa-ep300.pth.tar"
 
 mkdir -p "${LOG_ROOT}"
 
