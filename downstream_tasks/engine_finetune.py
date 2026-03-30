@@ -64,20 +64,26 @@ def train_one_epoch(
         targets = targets.to(device, non_blocking=True)
 
         with torch.cuda.amp.autocast(enabled=torch.cuda.is_available()):
-            outputs = model(samples).squeeze()
-            if args.task == 'classification' and len(outputs.shape) == 1:
-                outputs = outputs.unsqueeze(0)
-            if len(targets) == 1:
-                loss = criterion(outputs, targets)
+            outputs = model(samples)
+            if args.task == 'classification':
+                outputs = outputs.squeeze()
+                if len(outputs.shape) == 1:
+                    outputs = outputs.unsqueeze(0)
+                if len(targets) == 1:
+                    loss = criterion(outputs, targets)
+                else:
+                    loss = criterion(outputs, targets.squeeze())
+                    targets = targets.squeeze()
             else:
-                loss = criterion(outputs, targets.squeeze())
-                targets = targets.squeeze()
+                outputs = outputs.float().view(-1)
+                targets = targets.float().view(-1)
+                loss = criterion(outputs, targets)
 
         loss_value = loss.item()
 
         if args.task == 'regression':
-            mse = torch.mean((targets - outputs.squeeze()) ** 2)
-            mae = torch.mean(torch.abs(targets - outputs.squeeze()))
+            mse = torch.mean((targets - outputs) ** 2)
+            mae = torch.mean(torch.abs(targets - outputs))
 
         if not math.isfinite(loss_value):
             print("Loss is {}, stopping training".format(loss_value))
@@ -136,13 +142,19 @@ def evaluate(args, data_loader, model, device, task):
         target = target.to(device, non_blocking=True)
 
         with torch.cuda.amp.autocast(enabled=torch.cuda.is_available()):
-            output = model(images).squeeze()
-            if task == 'classification' and len(output.shape) == 1:
-                output = output.unsqueeze(0)
-            if len(target) == 1:
-                loss = criterion(output, target)
+            output = model(images)
+            if task == 'classification':
+                output = output.squeeze()
+                if len(output.shape) == 1:
+                    output = output.unsqueeze(0)
+                if len(target) == 1:
+                    loss = criterion(output, target)
+                else:
+                    loss = criterion(output, target.squeeze())
             else:
-                loss = criterion(output, target.squeeze())
+                output = output.float().view(-1)
+                target = target.float().view(-1)
+                loss = criterion(output, target)
 
         batch_size = images.shape[0]
         metric_logger.update(loss=loss.item())
@@ -158,8 +170,8 @@ def evaluate(args, data_loader, model, device, task):
             pred_all.append(predictions.detach().cpu().numpy().reshape(-1))
             prob_all.append(probabilities.detach().cpu().numpy())
         else:
-            target = target.float().view(-1)
-            prediction = output.float().view(-1)
+            target = target.view(-1)
+            prediction = output.view(-1)
             gt_all.append(target.detach().cpu().numpy().reshape(-1))
             pred_all.append(prediction.detach().cpu().numpy().reshape(-1))
 

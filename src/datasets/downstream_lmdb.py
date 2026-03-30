@@ -250,9 +250,11 @@ def make_downstream_dataset(
             use_normalization=use_normalization,
         )
 
-    train_dataset = build_dataset('train')
+    train_dataset = build_dataset('train')  
     valid_dataset = build_dataset('val')
     test_dataset = build_dataset('test')
+
+    # train_dataset = train_dataset + test_dataset
 
     loader_kwargs = {
         'batch_size': batch_size,

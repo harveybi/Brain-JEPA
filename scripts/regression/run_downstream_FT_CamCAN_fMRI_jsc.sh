@@ -3,9 +3,9 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --gres=gpu:1
-#SBATCH --partition=booster
-#SBATCH --cpus-per-task=12
-#SBATCH --time=04:00:00
+#SBATCH --partition=develbooster
+#SBATCH --cpus-per-task=48
+#SBATCH --time=01:00:00
 #SBATCH --output=/p/project1/hai_1148/results/logs/CamCAN_fMRI_Rest/%j.out
 #SBATCH --error=/p/project1/hai_1148/results/logs/CamCAN_fMRI_Rest/%j.err
 
@@ -24,7 +24,7 @@ REPO_ROOT="/p/project1/hai_1148/Brain-JEPA"
 DATA_ROOT="${REPO_ROOT}/data"
 OUTPUT_ROOT="${REPO_ROOT}/output_dirs"
 LOG_ROOT="/p/project1/hai_1148/results/logs/CamCAN_fMRI_Rest"
-PRETRAIN_CKPT="${REPO_ROOT}/path/to/jepa-ep300.pth.tar"
+PRETRAIN_CKPT="/p/project1/hai_1148/Brain-JEPA/logs/Pretraining/jepa-ep300.pth.tar"
 
 mkdir -p "${LOG_ROOT}"
 
@@ -41,7 +41,7 @@ python downstream_eval.py \
     --config "${REPO_ROOT}/configs/downstream/fine_tune.yaml" \
     --downstream_task fine_tune \
     --batch_size 16 \
-    --epochs 50 \
+    --epochs 100 \
     --blr "${BLR}" \
     --weight_decay "${WEIGHT_DECAY}" \
     --layer_decay "${LAYER_DECAY}" \

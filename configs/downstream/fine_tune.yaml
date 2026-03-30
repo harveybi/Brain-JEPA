@@ -1,7 +1,7 @@
 global_pool: true
 
 resume: ''
-accum_iter: 1
+accum_iter: 2
 lr: null
 
 drop_path: 0.1
